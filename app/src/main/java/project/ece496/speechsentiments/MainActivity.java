@@ -2,7 +2,6 @@ package project.ece496.speechsentiments;
 
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
@@ -14,14 +13,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.File;
 import java.io.IOException;
 
 import project.ece496.speechsentiments.activities.RecorderActivity;
-import project.ece496.speechsentiments.analysis.TextToneAnalyzer;
-import project.ece496.speechsentiments.analysis.WatsonToneAnalyzer;
 import project.ece496.speechsentiments.recorder.AudioRecorder;
-import project.ece496.speechsentiments.transcriber.WatsonSpeechTranscriber;
 
 public class MainActivity extends RecorderActivity {
     private static final String LOG_TAG = "AudioRecordTest";
@@ -32,16 +27,6 @@ public class MainActivity extends RecorderActivity {
 
     private PlayButton   mPlayButton = null;
     private MediaPlayer mPlayer = null;
-
-
-
-    private TextView speechTranscriptionTextView;
-    private TextView toneAnalysisTextView;
-
-    private TextToneAnalyzer textToneAnalyzer;
-    private WatsonSpeechTranscriber transcriber;
-
-    private String transcription;
 
     private void onRecord(boolean start) {
         if (start) {
@@ -83,8 +68,6 @@ public class MainActivity extends RecorderActivity {
     private void stopRecording() {
         mRecorder.stopRecording();
         mRecorder = null;
-
-        new TranscriptionTask().execute(new File(mFileName));
     }
 
     class RecordButton extends AppCompatButton {
@@ -160,15 +143,6 @@ public class MainActivity extends RecorderActivity {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
 
-        speechTranscriptionTextView = new TextView(this);
-        speechTranscriptionTextView.setText("");
-        ll.addView(speechTranscriptionTextView);
-
-        // tone analysis stuff
-        toneAnalysisTextView = new TextView(this);
-        toneAnalysisTextView.setText("");
-        ll.addView(toneAnalysisTextView);
-
         setContentView(ll);
     }
 
@@ -204,35 +178,6 @@ public class MainActivity extends RecorderActivity {
         if (mPlayer != null) {
             mPlayer.release();
             mPlayer = null;
-        }
-    }
-
-
-    class TranscriptionTask extends AsyncTask<File, Void, String>{
-        @Override
-        protected String doInBackground(File... files) {
-            transcriber = new WatsonSpeechTranscriber();
-            return transcriber.transcribe(files[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            // TODO: spaghetti code here...
-            new ToneAnalysisTask().execute(s);
-            speechTranscriptionTextView.setText(s);
-        }
-    }
-
-    class ToneAnalysisTask extends AsyncTask<String, Void, String>{
-        @Override
-        protected String doInBackground(String... strings) {
-            textToneAnalyzer = new WatsonToneAnalyzer();
-            return textToneAnalyzer.analyze(strings[0]).toString();
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            toneAnalysisTextView.setText(s);
         }
     }
 }

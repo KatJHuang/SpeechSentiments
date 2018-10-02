@@ -12,7 +12,7 @@ import omrecorder.AudioChunk;
 import omrecorder.PullTransport;
 
 /**
- * Created by catherinehuang on 2018-08-28.
+ * Activity template that conforms to the OmRecorder API.
  */
 
 public class RecorderActivity extends AppCompatActivity

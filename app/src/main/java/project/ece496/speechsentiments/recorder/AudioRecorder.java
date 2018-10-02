@@ -16,8 +16,6 @@ import project.ece496.speechsentiments.activities.RecorderActivity;
  */
 
 public class AudioRecorder {
-    private String filePath;
-    private RecorderActivity activity;
     private Recorder recorder;
 
     public AudioRecorder(String filePath, RecorderActivity activity){
